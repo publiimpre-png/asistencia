@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Gestión Escolar - CONALEP</title>
+    <style>
+        /* Paleta de colores Institucional CONALEP */
+        :root {
+            --verde-principal: #005643;
+            --verde-claro: #008467;
+            --dorado: #C5A059;
+            --gris-fondo: #f4f6f6;
+            --blanco: #ffffff;
+            --texto-oscuro: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--gris-fondo);
+            color: var(--texto-oscuro);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* Contenedor Mockup Móvil/Web */
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            min-height: 750px;
+            background: var(--blanco);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Encabezado General */
+        .app-header {
+            background-color: var(--verde-principal);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--dorado);
+        }
+
+        .app-header img {
+            max-width: 160px;
+            height: auto;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* Contenido de las pantallas */
+        .screen {
+            padding: 25px 20px;
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--verde-principal);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* Formulario y Controles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--verde-principal);
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--verde-claro);
+        }
+
+        /* Botones Especiales */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--verde-principal);
+            color: var(--blanco);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--verde-claro);
+        }
+
+        .btn-secondary {
+            background-color: #e74c3c;
+            color: var(--blanco);
+        }
+
+        .btn-neutral {
+            background-color: #95a5a6;
+            color: var(--blanco);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--verde-principal);
+            color: var(--verde-principal);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0,86,67,0.05);
+        }
+
+        /* Panel Configuración Profesor */
+        .prof-profile-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px dashed var(--dorado);
+        }
+
+        /* Emojis Neurodidáctica */
+        .emoji-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+        }
+
+        .emoji-btn {
+            font-size: 2.2rem;
+            background: none;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .emoji-btn.selected {
+            border-color: var(--dorado);
+            background-color: rgba(197, 160, 89, 0.15);
+        }
+
+        /* Cámara simulada */
+        .camera-box {
+            width: 100%;
+            height: 150px;
+            background: #2c3e50;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* Tabla de Monitoreo */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--verde-principal);
+            color: white;
+        }
+
+        /* Estilos de Estado Permanente */
+        .badge-permanent {
+            background-color: var(--dorado);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="app-header">
+            <img id="logoApp" src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Logo_CONALEP.svg" alt="CONALEP Logo">
+        </div>
+
+        <div id="screen-welcome" class="screen active">
+            <h2 id="welcome-title">¡Te damos la bienvenida!</h2>
+            <p class="subtitle">Selecciona tu rol para ingresar al portal didáctico</p>
+            
+            <div id="prof-registered-info" style="display:none; text-align:center; margin-bottom:15px;">
+                <span class="badge-permanent">Sesión Configurada</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="goToScreen('screen-login-student')">Soy Alumno</button>
+            <button class="btn btn-outline" id="btn-prof-role" onclick="goToScreen('screen-login-teacher')">Soy Profesor</button>
+            
+            <button class="btn btn-neutral" id="btn-change-prof" style="display:none; font-size:0.85rem; padding:6px;" onclick="clearTeacherName()">Cambiar/Restablecer Docente</button>
+        </div>
+
+        <div id="screen-login-student" class="screen">
+            <h2>Acceso para Alumnos</h2>
+            <p class="subtitle">Ingresa tus credenciales institucionales</p>
+            <div class="form-group">
+                <label for="student-matricula">Matrícula Escolar:</label>
+                <input type="text" id="student-matricula" placeholder="Ej. 18002034-5">
+            </div>
+            <button class="btn btn-primary" onclick="loginStudent()">Ingresar</button>
+            <button class="btn btn-neutral" onclick="goToScreen('screen-welcome')">Regresar</button>
+        </div>
+
+        <div id="screen-login-teacher" class="screen">
+            <h2>Acceso para Profesores</h2>
+            <p class="subtitle">Ingresa tu contraseña de acceso</p>
+            <div class="form-group">
+                <label for="teacher-password">Contraseña:</label>
+                <input type="password" id="teacher-password" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary" onclick="loginTeacher()">Ingresar</button>
+            <button class="btn btn-neutral" onclick="goToScreen('screen-welcome')">Regresar</button>
+        </div>
+
+        <div id="screen-teacher-setup" class="screen">
+            <h2>Configuración de la Clase</h2>
+            
+            <div class="prof-profile-section">
+                <div class="form-group" style="margin-bottom: 5px;">
+                    <label for="teacher-name">Nombre del Docente:</label>
+                    <input type="text" id="teacher-name" placeholder="Ej. Profr. Alejandro Saavedra">
+                </div>
+                <div style="display:flex; gap: 10px; align-items:center; margin-top:8px;">
+                    <input type="checkbox" id="chk-permanent" checked>
+                    <label for="chk-permanent" style="font-size:0.85rem; cursor:pointer; margin:0;">Mantener permanente</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="class-message">Mensaje, dato curioso o reto matemático:</label>
+                <textarea id="class-message" rows="3" placeholder="Ej. ¿Cuál es la derivada de f(x)=3x²? Sube foto de tu procedimiento."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Recurso de Apoyo Visual (Opcional):</label>
+                <button class="btn btn-outline" style="padding:8px; font-size:0.9rem;" onclick="document.getElementById('teacher-file').click()">📂 Seleccionar Imagen</button>
+                <input type="file" id="teacher-file" accept="image/*" style="display:none;" onchange="previewTeacherImage(this)">
+                <div id="teacher-img-preview" style="text-align:center; margin-top:5px; font-size:0.8rem; color:var(--verde-claro);"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveClassSetup(false)">Activar Mensaje y Continuar</button>
+            <button class="btn btn-neutral" onclick="saveClassSetup(true)">Omitir Paso Didáctico</button>
+        </div>
+
+        <div id="screen-teacher-monitor" class="screen">
+            <h2>Panel de Asistencias</h2>
+            <p id="monitor-prof-name" style="font-weight:bold; color:var(--dorado); text-align:center;"></p>
+            <p class="subtitle" style="margin-bottom:10px;">Respuestas y estados de ánimo recibidos en tiempo real</p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Ánimo</th>
+                            <th>Reto / Evidencia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-table-body">
+                        </tbody>
+                </table>
+            </div>
+            
+            <button class="btn btn-secondary" style="margin-top:20px;" onclick="goToScreen('screen-welcome')">Cerrar Sesión</button>
+        </div>
+
+        <div id="screen-student-step-a" class="screen">
+            <h2>Pizarra de Inicio</h2>
+            <p class="subtitle">Lee con atención la indicación de tu profesor</p>
+            
+            <div style="background:#f0f7f4; padding:15px; border-radius:10px; margin-bottom:15px; border-left:5px solid var(--verde-principal);">
+                <p id="student-display-message" style="font-style:italic; font-weight:500;"></p>
+                <div id="student-display-img-box" style="margin-top:10px; text-align:center; display:none;">
+                    <img id="student-display-img" style="max-width:100%; max-height:150px; border-radius:8px;" alt="Recurso didáctico">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="student-answer">Tu Respuesta / Comentario:</label>
+                <textarea id="student-answer" rows="3" placeholder="Escribe aquí tu aportación..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Evidencia en Foto (Matemáticas / Apuntes):</label>
+                <div class="camera-box" onclick="simulateCapture()">
+                    <span id="camera-prompt">📸 Toca para simular tomar Foto</span>
+                    <img id="simulated-photo" class="camera-preview" src="" alt="Foto capturada">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="submitStepA()">Guardar y Continuar</button>
+        </div>
+
+        <div id="screen-student-step-b" class="screen">
+            <h2>Neurodidáctica Emocional</h2>
+            <p class="subtitle">¿Cómo te sientes el día de hoy?</p>
+            
+            <div class="emoji-container">
+                <button class="emoji-btn" onclick="selectEmoji(this, '🤩')">🤩</button>
+                <button class="emoji-btn" onclick="selectEmoji(this, '🙂')">🙂</button>
+                <button class="emoji-btn" onclick="selectEmoji(this, '😐')">😐</button>
+                <button class="emoji-btn" onclick="selectEmoji(this, '😞')">😞</button>
+                <button class="emoji-btn" onclick="selectEmoji(this, '😡')">😡</button>
+            </div>
+
+            <div style="text-align:center; margin-bottom:20px; font-weight:600; color:var(--verde-claro);" id="selected-mood-text">
+                Selecciona una carita
+            </div>
+
+            <button class="btn btn-primary" onclick="completeStudentFlow()">Registrar Asistencia</button>
+        </div>
+
+        <div id="screen-student-success" class="screen">
+            <div style="text-align:center;">
+                <span style="font-size:4rem;">✅</span>
+                <h2 style="margin-top:15px;">¡Asistencia Registrada!</h2>
+                <p class="subtitle">Tu estado emocional y respuestas han sido enviados correctamente al panel docente.</p>
+                <button class="btn btn-primary" onclick="goToScreen('screen-welcome')">Salir</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Variables de Control de Estado de la Aplicación ---
+        let currentMood = "";
+        let uploadedImageBase64 = "";
+        let capturedPhotoBase64 = "";
+
+        // Inicializar la aplicación y cargar preferencias guardadas
+        window.onload = function() {
+            checkRegisteredTeacher();
+            loadAttendanceTable();
+        };
+
+        // Navegación entre pantallas
+        function goToScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            // Reajustes al cambiar pantallas
+            if(screenId === 'screen-welcome') {
+                checkRegisteredTeacher();
+            }
+        }
+
+        // Comprobación de persistencia del Nombre del Profesor
+        function checkRegisteredTeacher() {
+            const savedName = localStorage.getItem('teacherName');
+            const welcomeTitle = document.getElementById('welcome-title');
+            const btnProfRole = document.getElementById('btn-prof-role');
+            const btnChangeProf = document.getElementById('btn-change-prof');
+            const badgePerm = document.getElementById('prof-registered-info');
+
+            if(savedName) {
+                welcomeTitle.innerText = `¡Bienvenido de vuelta!`;
+                btnProfRole.innerText = `Profesor: ${savedName}`;
+                document.getElementById('teacher-name').value = savedName;
+                btnChangeProf.style.display = "block";
+                badgePerm.style.display = "block";
+            } else {
+                welcomeTitle.innerText = "¡Te damos la bienvenida!";
+                btnProfRole.innerText = "Soy Profesor";
+                btnChangeProf.style.display = "none";
+                badgePerm.style.display = "none";
+            }
+        }
+
+        // Eliminar profesor guardado
+        function clearTeacherName() {
+            localStorage.removeItem('teacherName');
+            document.getElementById('teacher-name').value = "";
+            checkRegisteredTeacher();
+        }
+
+        // Autenticación básica
+        function loginStudent() {
+            const mat = document.getElementById('student-matricula').value.trim();
+            if(!mat) {
+                alert("Por favor ingresa tu matrícula.");
+                return;
+            }
+            localStorage.setItem('currentStudentMatricula', mat);
+            
+            // Decidir flujo basado en la configuración del Profesor
+            const omitStepA = localStorage.getItem('omitStepA') === 'true';
+            if (omitStepA) {
+                goToScreen('screen-student-step-b'); // Salta al Paso B
+            } else {
+                // Cargar datos didácticos del Profesor
+                document.getElementById('student-display-message').innerText = localStorage.getItem('classMessage') || 'Sin mensaje configurado.';
+                const imgData = localStorage.getItem('classImage');
+                if(imgData) {
+                    document.getElementById('student-display-img').src = imgData;
+                    document.getElementById('student-display-img-box').style.display = "block";
+                } else {
+                    document.getElementById('student-display-img-box').style.display = "none";
+                }
+                // Limpiar campos anteriores del alumno
+                document.getElementById('student-answer').value = "";
+                document.getElementById('simulated-photo').style.display = "none";
+                document.getElementById('camera-prompt').style.display = "block";
+                capturedPhotoBase64 = "";
+
+                goToScreen('screen-student-step-a');
+            }
+        }
+
+        function loginTeacher() {
+            const pass = document.getElementById('teacher-password').value;
+            if(pass === "") {
+                alert("Por favor introduce una contraseña de acceso simulada.");
+            } else {
+                goToScreen('screen-teacher-setup');
+            }
+        }
+
+        // Procesamiento de recursos de imagen (Profesor)
+        function previewTeacherImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    document.getElementById('teacher-img-preview').innerText = "✓ Imagen cargada con éxito.";
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Guardado de Configuración de Clase
+        function saveClassSetup(isOmit) {
+            const name = document.getElementById('teacher-name').value.trim();
+            const isPermanent = document.getElementById('chk-permanent').checked;
+
+            if(!name) {
+                alert("Es indispensable asignar su nombre para el registro de la clase.");
+                return;
+            }
+
+            if(isPermanent) {
+                localStorage.setItem('teacherName', name);
+            } else {
+                localStorage.removeItem('teacherName');
+            }
+
+            if(isOmit) {
+                localStorage.setItem('omitStepA', 'true');
+                localStorage.removeItem('classMessage');
+                localStorage.removeItem('classImage');
+            } else {
+                localStorage.setItem('omitStepA', 'false');
+                const msg = document.getElementById('class-message').value.trim();
+                localStorage.setItem('classMessage', msg);
+                localStorage.setItem('classImage', uploadedImageBase64 || "");
+            }
+
+            document.getElementById('monitor-prof-name').innerText = `Sesión iniciada por: ${name}`;
+            loadAttendanceTable();
+            goToScreen('screen-teacher-monitor');
+        }
+
+        // Simulación de captura de cámara fotográfica (Alumno)
+        function simulateCapture() {
+            // Se usa una imagen de simulación didáctica basada en canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 150;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = "#008467";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "14px Arial";
+            ctx.fillText("Evidencia Fotográfica Capturada", 40, 75);
+            ctx.fillText("Hora: " + new Date().toLocaleTimeString(), 40, 100);
+
+            capturedPhotoBase64 = canvas.toDataURL();
+            
+            const imgElement = document.getElementById('simulated-photo');
+            imgElement.src = capturedPhotoBase64;
+            imgElement.style.display = "block";
+            document.getElementById('camera-prompt').style.display = "none";
+        }
+
+        // Guardar Paso A del Alumno
+        function submitStepA() {
+            const answer = document.getElementById('student-answer').value.trim();
+            localStorage.setItem('lastStudentAnswer', answer || "Sin respuesta escrita");
+            localStorage.setItem('lastStudentPhoto', capturedPhotoBase64 || "Sin foto");
+            goToScreen('screen-student-step-b');
+        }
+
+        // Manejo de Interacción Neurodidáctica (Emojis)
+        function selectEmoji(element, emojiValue) {
+            document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+            element.classList.add('selected');
+            currentMood = emojiValue;
+            document.getElementById('selected-mood-text').innerText = `Sentimiento: ${emojiValue}`;
+        }
+
+        // Finalización del flujo y volcado de datos simulados a la tabla
+        function completeStudentFlow() {
+            if(!currentMood) {
+                alert("Por favor dinos cómo te sientes hoy seleccionando una carita.");
+                return;
+            }
+
+            const matricula = localStorage.getItem('currentStudentMatricula') || 'Anon';
+            const answer = localStorage.getItem('lastStudentAnswer') || 'N/A (Omitido)';
+            const photo = localStorage.getItem('lastStudentPhoto') || '';
+
+            // Estructurar el almacenamiento en el stack de asistencias
+            let currentData = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+            
+            let evidenciaTexto = answer;
+            if(photo && photo !== "Sin foto") {
+                evidenciaTexto += " 📸 (Foto Adjunta)";
+            }
+
+            currentData.push({
+                matricula: matricula,
+                mood: currentMood,
+                evidence: evidenciaTexto
+            });
+
+            localStorage.setItem('attendanceRecords', JSON.stringify(currentData));
+            
+            // Resetear seleccionador de caritas
+            currentMood = "";
+            document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+            document.getElementById('selected-mood-text').innerText = "Selecciona una carita";
+
+            goToScreen('screen-student-success');
+        }
+
+        // Carga de la lista de asistencia en tiempo real
+        function loadAttendanceTable() {
+            const tbody = document.getElementById('attendance-table-body');
+            tbody.innerHTML = "";
+            
+            const records = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+
+            if(records.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#95a5a6;">Esperando ingresos de alumnos...</td></tr>`;
+                return;
+            }
+
+            records.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${r.matricula}</strong></td>
+                    <td style="font-size:1.3rem; text-align:center;">${r.mood}</td>
+                    <td>${r.evidence}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
