@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App de Gestión Escolar - CONALEP</title>
+
+    <style>
+        /* Paleta de colores Institucional CONALEP */
+        :root {
+            --verde-principal: #005643;
+            --verde-claro: #008467;
+            --dorado: #C5A059;
+            --gris-fondo: #f4f6f6;
+            --blanco: #ffffff;
+            --texto-oscuro: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--gris-fondo);
+            color: var(--texto-oscuro);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* Contenedor Mockup Móvil/Web */
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            background: var(--blanco);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Encabezado General */
+        .app-header {
+            background-color: #005643;
+            padding: 10px 0;
+            text-align: center;
+            border-bottom: 4px solid #C5A059;
+        }
+
+        .app-header img {
+            width: 480px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Contenido de las pantallas */
+        .screen {
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            animation: fadeIn .4s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--verde-principal);
+            margin-bottom: 20px;
+            margin-top:20px;
+            font-size: 1.4rem;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* Formulario y Controles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--verde-principal);
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--verde-claro);
+        }
+
+        /* Botones Especiales */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--verde-principal);
+            color: var(--blanco);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--verde-claro);
+        }
+
+        .btn-secondary {
+            background-color: #e74c3c;
+            color: var(--blanco);
+        }
+
+        .btn-neutral {
+            background-color: #95a5a6;
+            color: var(--blanco);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--verde-principal);
+            color: var(--verde-principal);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0,86,67,0.05);
+        }
+
+        /* Panel Configuración Profesor */
+        .prof-profile-section {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px dashed var(--dorado);
+        }
+
+        /* Emojis Neurodidáctica */
+        .emoji-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+        }
+
+        .emoji-btn {
+            font-size: 2.2rem;
+            background: none;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .emoji-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .emoji-btn.selected {
+            border-color: var(--dorado);
+            background-color: rgba(197, 160, 89, 0.15);
+        }
+
+        /* Cámara simulada */
+        .camera-box {
+            width: 100%;
+            height: 150px;
+            background: #2c3e50;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* Tabla de Monitoreo */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--verde-principal);
+            color: white;
+        }
+
+        /* Estilos de Estado Permanente */
+        .badge-permanent {
+            background-color: var(--dorado);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+/* Diseño para celular */
+body{
+    margin:0;
+    padding:10px;
+    box-sizing:border-box;
+}
+
+.container{
+    width:100%;
+    max-width:430px;
+    margin:auto;
+}
+
+input,
+select,
+button{
+    width:100%;
+    box-sizing:border-box;
+    font-size:16px;
+}
+
+img{
+    max-width:100%;
+    height:auto;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="app-header">
+        <img
+            id="logoApp"
+            src="https://github.com/publiimpre-png/asistencia/blob/main/LOGOCOYOACAN3.png?raw=true"
+            alt="Logo CONALEP">
+    </div>
+
+    <div id="screen-welcome" class="screen active">
+        <h2 id="welcome-title">¡Bienvenido(a)!</h2>
+
+        <div id="prof-registered-info" style="display:none; text-align:center; margin-bottom:15px;">
+            <span class="badge-permanent">Selecciona una opción</span>
+        </div>
+
+        <button class="btn btn-primary" onclick="goToScreen('screen-login-student')">🎓Alumno</button>
+        <button class="btn btn-outline" id="btn-prof-role" onclick="if(localStorage.getItem('teacherName')){ goToScreen('screen-login-teacher') } else { goToScreen('screen-teacher-setup') }">Docente</button>
+        
+        <button class="btn btn-neutral" id="btn-change-prof" style="display:none; font-size:0.85rem; padding:6px;" onclick="clearTeacherName()">Cambiar/Restablecer Docente</button>
+    </div>
+
+    <div id="screen-login-student" class="screen">
+        <h2>Acceso para Alumnos</h2>
+        <p class="subtitle">Ingresa tus credenciales institucionales</p>
+        <div class="form-group">
+            <label for="student-matricula">Matrícula Escolar:</label>
+            <input type="text" id="student-matricula" placeholder="Ej. 18002034-5">
+        </div>
+        <button class="btn btn-primary" onclick="loginStudent()">Ingresar</button>
+        <button class="btn btn-neutral" onclick="goToScreen('screen-welcome')">Regresar</button>
+    </div>
+
+    <div id="screen-login-teacher" class="screen">
+        <div class="card-header" style="background-color: var(--verde-principal); color: var(--blanco); padding: 15px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h3 style="margin: 0;">Panel del Docente</h3>
+            <p style="margin: 5px 0 0 0; font-size: 0.85rem; opacity: 0.9;">Asistencia por Código QR</p>
+        </div>
+
+        <div class="card-body" style="padding: 20px; text-align: center; background-color: var(--blanco); border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div id="contenedorQR" style="margin: 20px auto; padding: 15px; background: white; border: 2px dashed var(--verde-claro); display: inline-block; border-radius: 8px; min-width: 200px; min-height: 200px;">
+            </div>
+
+            <div id="info-clase-qr" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                <h4 id="qr-materia" style="color: var(--verde-principal); margin: 0 0 5px 0;">Cargando clase...</h4>
+                <p id="qr-horario" style="margin: 0; font-size: 0.9rem; color: var(--texto-oscuro); font-weight: bold;"></p>
+                <p id="qr-fecha" style="margin: 5px 0 0 0; font-size: 0.85rem; color: #7f8c8d;"></p>
+            </div>
+
+            <button class="btn btn-primary" onclick="goToScreen('screen-teacher-monitor')" style="margin-top: 15px;">Ver Panel de Registros</button>
+            <button class="btn btn-neutral" onclick="goToScreen('screen-welcome')" style="margin-top: 10px; width: 100%; padding: 10px; border: 1px solid #ccc; background: #fff; cursor: pointer; border-radius: 4px;">
+                ⬅️ Volver al Menú
+            </button>
+        </div>
+    </div>
+
+    <div id="screen-teacher-setup" class="screen">
+        <h2>Configuración de la Clase</h2>
+        
+        <div class="prof-profile-section">
+            <div class="form-group" style="margin-bottom: 5px;">
+                <label for="teacher-name">Nombre del Docente:</label>
+                <input type="text" id="teacher-name" placeholder="Ej. Profr. Alejandro Saavedra">
+            </div>
+            <div style="display:flex; gap: 10px; align-items:center; margin-top:8px;">
+                <input type="checkbox" id="chk-permanent" checked>
+                <label for="chk-permanent" style="font-size:0.85rem; cursor:pointer; margin:0;">Mantener permanente</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="class-message">Mensaje, dato curioso o reto matemático:</label>
+            <textarea id="class-message" rows="3" placeholder="Ej. ¿Cuál es la derivada de f(x)=3x²? Sube foto de tu procedimiento."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Recurso de Apoyo Visual (Opcional):</label>
+            <button class="btn btn-outline" style="padding:8px; font-size:0.9rem;" onclick="document.getElementById('teacher-file').click()">📂 Seleccionar Imagen</button>
+            <input type="file" id="teacher-file" accept="image/*" style="display:none;" onchange="previewTeacherImage(this)">
+            <div id="teacher-img-preview" style="text-align:center; margin-top:5px; font-size:0.8rem; color:var(--verde-claro);"></div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveClassSetup(false)">Activar e Ir al QR</button>
+        <button class="btn btn-neutral" onclick="saveClassSetup(true)">Omitir Paso Didáctico e Ir al QR</button>
+    </div>
+
+    <div id="screen-teacher-monitor" class="screen">
+        <h2>Panel de Asistencias</h2>
+        <p id="monitor-prof-name" style="font-weight:bold; color:var(--dorado); text-align:center;"></p>
+        <p class="subtitle" style="margin-bottom:10px;">Respuestas y estados de ánimo recibidos en tiempo real</p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Ánimo</th>
+                        <th>Reto / Evidencia</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-table-body">
+                </tbody>
+            </table>
+        </div>
+        
+        <button class="btn btn-primary" style="margin-top:20px;" onclick="goToScreen('screen-login-teacher')">Proyectar QR Nuevamente</button>
+        <button class="btn btn-secondary" style="margin-top:10px;" onclick="goToScreen('screen-welcome')">Cerrar Sesión</button>
+    </div>
+
+    <div id="screen-student-step-a" class="screen">
+        <h2>Pizarra de Inicio</h2>
+        <p class="subtitle">Lee con atención la indicación de tu profesor</p>
+        
+        <div style="background:#f0f7f4; padding:15px; border-radius:10px; margin-bottom:15px; border-left:5px solid var(--verde-principal);">
+            <p id="student-display-message" style="font-style:italic; font-weight:500;"></p>
+            <div id="student-display-img-box" style="margin-top:10px; text-align:center; display:none;">
+                <img id="student-display-img" style="max-width:100%; max-height:150px; border-radius:8px;" alt="Recurso didáctico">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="student-answer">Tu Respuesta / Comentario:</label>
+            <textarea id="student-answer" rows="3" placeholder="Escribe aquí tu aportación..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Evidencia en Foto (Matemáticas / Apuntes):</label>
+            <div class="camera-box" onclick="simulateCapture()">
+                <span id="camera-prompt">📸 Toca para simular tomar Foto</span>
+                <img id="simulated-photo" class="camera-preview" src="" alt="Foto capturada">
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="submitStepA()">Guardar y Continuar</button>
+    </div>
+
+    <div id="screen-student-step-b" class="screen">
+        <h2>Neurodidáctica Emocional</h2>
+        <p class="subtitle">¿Cómo te sientes el día de hoy?</p>
+        
+        <div class="emoji-container">
+            <button class="emoji-btn" onclick="selectEmoji(this, '🤩')">🤩</button>
+            <button class="emoji-btn" onclick="selectEmoji(this, '🙂')">🙂</button>
+            <button class="emoji-btn" onclick="selectEmoji(this, '😐')">😐</button>
+            <button class="emoji-btn" onclick="selectEmoji(this, '😞')">😞</button>
+            <button class="emoji-btn" onclick="selectEmoji(this, '😡')">😡</button>
+        </div>
+
+        <div style="text-align:center; margin-bottom:20px; font-weight:600; color:var(--verde-claro);" id="selected-mood-text">
+            Selecciona una carita
+        </div>
+
+        <button class="btn btn-primary" onclick="completeStudentFlow()">Registrar Asistencia</button>
+    </div>
+
+    <div id="screen-student-success" class="screen">
+        <div style="text-align:center;">
+            <span style="font-size:4rem;">✅</span>
+            <h2 style="margin-top:15px;">¡Asistencia Registrada!</h2>
+            <p class="subtitle">Tu estado emocional y respuestas han sido enviados correctamente al panel docente.</p>
+            <button class="btn btn-primary" onclick="goToScreen('screen-welcome')">Salir</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- LIBRERÍA QR INTERNA INCORPORADA ---
+    var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=a.length;e>d;d++){var f=a.charCodeAt(d);f>65536?(b[0]=240|f>>>18&7,b[1]=128|f>>>12&63,b[2]=128|f>>>6&63,b[3]=128|15&f):f>2048?(b[0]=224|f>>>12&15,b[1]=128|f>>>6&63,b[2]=128|15&f):f>128?(b[0]=192|f>>>6&31,b[1]=128|15&f):b[0]=f;for(var g=0;g<b.length;g++)this.parsedData.push(b[g])}this.getLength=function(){return this.parsedData.length},this.write=function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function o(){this.buffer=[],this.length=0}b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestVersion())},makeImpl:function(a,b){this.typeNumber=b,this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var c=0;c<this.moduleCount;c++){this.modules[c]=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++)this.modules[c][d]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,0),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,0)},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=a%2==0);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=b%2==0)},setupPositionAdjustPattern:function(){for(var a=p.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var f=-2;2>=f;f++)for(var g=-2;2>=g;g++)this.modules[d+f][e+g]=-2==f||2==f||-2==g||2==g||0==f&&0==g}},getBestVersion:function(){for(var a=0,b=this.dataList.length;b>a;a++)var c=this.dataList[a];for(var d=1;40>d;d++){var e=j.getRSBlocks(d,this.errorCorrectLevel);if(e){for(var f=0,g=0;g<e.length;g++)f+=e[g].dataCount;if(this.dataList[0].getLength()<=f)return d}}return 40},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==c||6==c)||d>=0&&6>=d&&(0==d||6==d)||c>=2&&4>=c&&d>=2&&4>=d)},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=p.getBCHTypeInfo(c),e=0;15>e;e++){var f=!a&&1==(d>>e&1);6>e?this.modules[e][8]=f:8>e?this.modules[e+1][8]=f:this.modules[this.moduleCount-15+e][8]=f}for(var e=0;15>e;e++){var f=!a&&1==(d>>e&1);8>e?this.modules[8][this.moduleCount-e-1]=f:9>e?this.modules[8][15-e-1+1]=f:this.modules[8][15-e-1]=f}this.modules[this.moduleCount-8][8]=!a},setupTypeNumber:function(a){for(var b=p.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(b>>c&1);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(b>>c&1);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,f=0,g=this.moduleCount-1;g>0;g-=2)for(6==g&&g--;;){for(var h=0;2<h;h++){var i=d,j=g-h;if(null==this.modules[i][j]){var k=!1;f<a.length&&(k=1==(a[f]>>>e&1));var l=p.getMask(b,i,j);l&&(k=!k),this.modules[i][j]=k,e--,-1==e&&(f++,e=7)}}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.createData=function(a,b,c){for(var d=j.getRSBlocks(a,b),f=new o,g=0;g<c.length;g++){var h=c[g];f.put(h.mode,4),f.put(h.getLength(),p.getLengthInBits(h.mode,a)),h.write(f)}for(var i=0,g=0;g<d.length;g++)i+=d[g].dataCount;if(f.getLengthInBits()>8*i)throw new Error("code length overflow. ("+f.getLengthInBits()+">"+8*i+")");for(f.getLengthInBits()+4<=8*i&&f.put(0,4);f.getLengthInBits()%8!=0;)f.putBit(!1);for(;;){if(f.getLengthInBits()>=8*i)break;if(f.put(b.PAD0,8),f.getLengthInBits()>=8*i)break;f.put(b.PAD1,8)}return b.createBytes(f,d)};var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13]],p={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;p.getBCHDigit(b)-p.getBCHDigit(p.G15)>=0;)b^=p.G15<<p.getBCHDigit(b)-p.getBCHDigit(p.G15);return(a<<10|b)^p.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;p.getBCHDigit(b)-p.getBCHDigit(p.G18)>=0;)b^=p.G18<<p.G18<<p.getBCHDigit(b)-p.getBCHDigit(p.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return p.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case 0:return(b+c)%2==0;case 1:return b%2==0;case 2:return c%3==0;case 3:return(b+c)%3==0;case 4:return(Math.floor(b/2)+Math.floor(c/3))%2==0;case 5:return b*c%2+b*c%3==0;case 6:return(b*c%2+b*c%3)%2==0;case 7:return(b*c%3+(b+c)%2)%2==0;default:throw new Error("bad maskPattern:"+a)}},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(40>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("typeNumber:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,d),h=-1;1>=h;h++)if(!(0>d+h||b<=d+h))for(var i=-1;1>=i;i++)0>e+i||b<=e+i||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}};i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.length;d++)b[c+d]^=g.glog(g.gexp(this.get(c))+g.gexp(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[1,100,74],[2,50,32],[2,50,24],[1,134,108],[2,67,54],[2,33,15],[2,33,11],[2,86,68],[3,43,35],[4,43,19],[4,43,15],[2,98,78],[4,49,64],[4,32,14],[4,32,11],[2,121,98],[4,60,46],[4,32,14],[4,32,11],[3,146,116],[4,58,42],[4,24,14],[5,24,11],[4,158,122],[4,54,36],[6,38,14],[6,38,11],[1,119,92],[4,119,80],[4,119,58],[4,119,36]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(!c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}};var g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=255;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)};for(var h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;b.prototype.createBytes=function(a,b){for(var c=0,d=0,e=0,f=new Array(b.length),h=new Array(b.length),k=0;k<b.length;k++){var l=b[k].dataCount,m=b[k].totalCount-l;d=Math.max(d,l),e=Math.max(e,m),f[k]=new Array(l);for(var n=0;n<f[k].length;n++)f[k][n]=255&a.buffer[n+c];c+=l;var o=p.getErrorCorrectPolynomial(m),q=new i(f[k],m),r=q.mod(o);h[k]=new Array(o.getLength()-1);for(var n=0;n<h[k].length;n++){var s=n+r.getLength()-h[k].length;h[k][n]=s>=0?r.get(s):0}}for(var t=0,n=0;n<b.length;n++)t+=b[n].totalCount;for(var u=new Array(t),v=0,n=0;d>n;n++)for(var k=0;k<b.length;k++)n<f[k].length&&(u[v++]=f[k][n]);for(var n=0;e>n;n++)for(var k=0;k<b.length;k++)n<h[k].length&&(u[v++]=h[k][n]);return u},p.getErrorCorrectPolynomial=function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},o.prototype={get:function(a){var b=Math.floor(a/8);return 1==(this.buffer[b]>>>7-a%8&1)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(a>>>b-c-1&1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var q=[[1,14,8,13],[1,26,15,22],[1,38,20,32],[2,20,11,15],[1,50,26,44],[1,62,36,54],[2,32,15,22],[2,24,11,14],[1,74,38,62],[2,44,22,34],[2,36,15,22],[2,28,12,14],[1,94,52,84],[2,52,26,42],[2,48,17,22],[4,26,11,13]],r=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();this.clear();var e=g("svg",{viewBox:"0 0 "+d+" "+d,width:"100%",height:"100%",fill:b.colorLight});e.appendChild(g("rect",{width:"100%",height:"100%",fill:b.colorLight})),c.appendChild(e);for(var f=0;d>f;f++)for(var h=0;d>h;h++)if(a.isDark(f,h)){var i=g("rect",{x:h,y:f,width:"1",height:"1",fill:b.colorDark});e.appendChild(i)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),s=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d);this.clear();var g=document.createElement("table");g.style.borderWidth="0px",g.style.borderStyle="none",g.style.borderCollapse="collapse",g.style.padding="0px",g.style.margin="0px",g.style.width=b.width+"px",g.style.height=b.height+"px";for(var h=0;d>h;h++){var i=document.createElement("tr");i.style.height=f+"px";for(var j=0;d>j;j++){var k=document.createElement("td");k.style.width=e+"px",k.style.padding="0px",k.style.margin="0px",k.style.backgroundColor=a.isDark(h,j)?b.colorDark:b.colorLight,i.appendChild(k)}g.appendChild(i)}c.appendChild(g)},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),t=function(){return"undefined"!=typeof CanvasRenderingContext2D}(),u=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(){c.appendChild(e),d._bSupportDataURI=!1}var b=this._htOption,c=this._el,d=this,e=document.createElement("canvas");e.width=b.width,e.height=b.height,c.appendChild(e);var f=e.getContext("2d");f.fillStyle=b.colorLight,f.fillRect(0,0,b.width,b.height);for(var h=a.getModuleCount(),i=b.width/h,j=b.height/h,k=Math.round(i),l=Math.round(j),m=0;h<m;m++)for(var n=0;h<n;n++)if(a.isDark(m,n)){f.fillStyle=b.colorDark;var o=n*i,p=m*j;f.fillRect(o,p,i,j)}if(0==d._bSupportDataURI){var q=e.toDataURL("image/png");var r=document.createElement("img");r.src=q,r.style.display="block",c.appendChild(r),e.style.display="none"}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),v=t?u:s;QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];if("string"==typeof a&&(a=document.getElementById(a)),this._android=function(){var a=-1,b=navigator.userAgent;if(/Android\s+([\d.]+)/.test(b)){var c=navigator.compileVersion;a=parseFloat(RegExp.$1)}return a}(),this._el=a,this._oQRCode=null,this._oDrawing=new v(this._el,this._htOption),this._htOption.text)this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(this._htOption.typeNumber,this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode)},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();
+
+    // --- VARIABLES DE CONTROL DE ESTADO ---
+    let currentMood = "";
+    let uploadedImageBase64 = "";
+    let capturedPhotoBase64 = "";
+
+    // Inicializar la aplicación y cargar preferencias guardadas
+    window.onload = function() {
+        checkRegisteredTeacher();
+        loadAttendanceTable();
+    };
+
+    // Navegación entre pantallas
+    function goToScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+
+        if (screenId === 'screen-welcome') {
+            checkRegisteredTeacher();
+        }
+        
+        if (screenId === 'screen-login-teacher') {
+            setTimeout(function() {
+                generarQrClase();
+            }, 50);
+        }
+    }
+
+    // Comprobación de persistencia del Nombre del Profesor
+    function checkRegisteredTeacher() {
+        const savedName = localStorage.getItem('teacherName');
+        const welcomeTitle = document.getElementById('welcome-title');
+        const btnProfRole = document.getElementById('btn-prof-role');
+        const btnChangeProf = document.getElementById('btn-change-prof');
+        const badgePerm = document.getElementById('prof-registered-info');
+
+        if(savedName) {
+            welcomeTitle.innerText = `¡Bienvenido(a)!`;
+            btnProfRole.innerText = `Profesor: ${savedName}`;
+            document.getElementById('teacher-name').value = savedName;
+            btnChangeProf.style.display = "block";
+            badgePerm.style.display = "block";
+        } else {
+            welcomeTitle.innerText = "¡Bienvenido(a)!";
+            btnProfRole.innerText = "👨‍🏫 Docente";
+            btnChangeProf.style.display = "none";
+            badgePerm.style.display = "none";
+        }
+    }
+
+    // Eliminar profesor guardado
+    function clearTeacherName() {
+        localStorage.removeItem('teacherName');
+        document.getElementById('teacher-name').value = "";
+        checkRegisteredTeacher();
+    }
+
+    // Flujo del Alumno
+    function loginStudent() {
+        const mat = document.getElementById('student-matricula').value.trim();
+        if(!mat) {
+            alert("Por favor ingresa tu matrícula.");
+            return;
+        }
+        localStorage.setItem('currentStudentMatricula', mat);
+        
+        const omitStepA = localStorage.getItem('omitStepA') === 'true';
+        if (omitStepA) {
+            goToScreen('screen-student-step-b');
+        } else {
+            document.getElementById('student-display-message').innerText = localStorage.getItem('classMessage') || 'Sin mensaje configurado.';
+            const imgData = localStorage.getItem('classImage');
+            if(imgData) {
+                document.getElementById('student-display-img').src = imgData;
+                document.getElementById('student-display-img-box').style.display = "block";
+            } else {
+                document.getElementById('student-display-img-box').style.display = "none";
+            }
+            document.getElementById('student-answer').value = "";
+            document.getElementById('simulated-photo').style.display = "none";
+            document.getElementById('camera-prompt').style.display = "block";
+            capturedPhotoBase64 = "";
+
+            goToScreen('screen-student-step-a');
+        }
+    }
+
+    // Guardado de Configuración de Clase e Ir Directo al QR
+    function saveClassSetup(isOmit) {
+        const name = document.getElementById('teacher-name').value.trim();
+        const isPermanent = document.getElementById('chk-permanent').checked;
+
+        if(!name) {
+            alert("Es indispensable asignar su nombre para el registro de la clase.");
+            return;
+        }
+
+        if(isPermanent) {
+            localStorage.setItem('teacherName', name);
+        } else {
+            localStorage.removeItem('teacherName');
+        }
+
+        if(isOmit) {
+            localStorage.setItem('omitStepA', 'true');
+            localStorage.removeItem('classMessage');
+            localStorage.removeItem('classImage');
+        } else {
+            localStorage.setItem('omitStepA', 'false');
+            const msg = document.getElementById('class-message').value.trim();
+            localStorage.setItem('classMessage', msg);
+            localStorage.setItem('classImage', uploadedImageBase64 || "");
+        }
+
+        document.getElementById('monitor-prof-name').innerText = `Sesión iniciada por: ${name}`;
+        loadAttendanceTable();
+        goToScreen('screen-login-teacher');
+    }
+
+    // Procesamiento de imágenes cargadas por el profesor
+    function previewTeacherImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedImageBase64 = e.target.result;
+                document.getElementById('teacher-img-preview').innerText = "✓ Imagen cargada con éxito.";
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Simulación de captura fotográfica del Alumno
+    function simulateCapture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 300;
+        canvas.height = 150;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = "#008467";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "14px Arial";
+        ctx.fillText("Evidencia Fotográfica Capturada", 40, 75);
+        ctx.fillText("Hora: " + new Date().toLocaleTimeString(), 40, 100);
+
+        capturedPhotoBase64 = canvas.toDataURL();
+        
+        const imgElement = document.getElementById('simulated-photo');
+        imgElement.src = capturedPhotoBase64;
+        imgElement.style.display = "block";
+        document.getElementById('camera-prompt').style.display = "none";
+    }
+
+    // Guardar Paso A del Alumno
+    function submitStepA() {
+        const answer = document.getElementById('student-answer').value.trim();
+        localStorage.setItem('lastStudentAnswer', answer || "Sin respuesta escrita");
+        localStorage.setItem('lastStudentPhoto', capturedPhotoBase64 || "Sin foto");
+        goToScreen('screen-student-step-b');
+    }
+
+    // Emojis Neurodidáctica
+    function selectEmoji(element, emojiValue) {
+        document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+        element.classList.add('selected');
+        currentMood = emojiValue;
+        document.getElementById('selected-mood-text').innerText = `Sentimiento: ${emojiValue}`;
+    }
+
+    // Finalizar Flujo Alumno
+    function completeStudentFlow() {
+        if(!currentMood) {
+            alert("Por favor dinos cómo te sientes hoy seleccionando una carita.");
+            return;
+        }
+
+        const matricula = localStorage.getItem('currentStudentMatricula') || 'Anon';
+        const answer = localStorage.getItem('lastStudentAnswer') || 'N/A (Omitido)';
+        const photo = localStorage.getItem('lastStudentPhoto') || '';
+
+        let currentData = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+        
+        let evidenciaTexto = answer;
+        if(photo && photo !== "Sin foto") {
+            evidenciaTexto += " 📸 (Foto Adjunta)";
+        }
+
+        currentData.push({
+            matricula: matricula,
+            mood: currentMood,
+            evidence: evidenciaTexto
+        });
+
+        localStorage.setItem('attendanceRecords', JSON.stringify(currentData));
+        
+        currentMood = "";
+        document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('selected-mood-text').innerText = "Selecciona una carita";
+
+        goToScreen('screen-student-success');
+    }
+
+    // --- GENERADOR DE QR COMPATIBLE CON FILE:/// Y LOCAL ---
+    function generarQrClase() {
+        console.log("Generando QR Local Seguro...");
+
+        const ahora = new Date();
+        const fechaActual = ahora.toLocaleDateString('es-MX');
+        const horaActual = ahora.getHours();
+        const minutosActuales = ahora.getMinutes().toString().padStart(2, '0');
+
+        const inputNombre = document.getElementById("teacher-name");
+        const nombreProfesor = inputNombre && inputNombre.value ? inputNombre.value : "Docente CONALEP";
+
+        let claseActual = "Sin clase asignada en este horario";
+        let horarioClase = "Horario Libre";
+
+        if (horaActual >= 7 && horaActual < 9) {
+            claseActual = "Cálculo Diferencial e Integral";
+            horarioClase = "07:00 - 09:00";
+        } else if (horaActual >= 9 && horaActual <= 13) { 
+            claseActual = "Temas Selectos de Matemáticas III";
+            horarioClase = "09:00 - 11:00";
+        }
+
+        const datosAsistencia = `CONALEP|PROFR:${nombreProfesor}|MATERIA:${claseActual}|FECHA:${fechaActual}|HORA:${horarioClase}`;
+
+        document.getElementById("qr-materia").innerText = claseActual;
+        document.getElementById("qr-horario").innerText = `Horario: ${horarioClase}`;
+        document.getElementById("qr-fecha").innerText = `Fecha: ${fechaActual}`;
+
+        const contenedor = document.getElementById("contenedorQR");
+        
+        // Usamos una API externa por URL que no genera bloqueos de seguridad de Chrome localmente
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=005643&data=${encodeURIComponent(datosAsistencia)}`;
+        
+        contenedor.innerHTML = `<img src="${qrUrl}" alt="Código QR de Asistencia" style="display:block; margin:0 auto; width:200px; height:200px;">`;
+    }
+
+    // Carga la tabla de registros guardados localmente
+    function loadAttendanceTable() {
+        const tbody = document.getElementById('attendance-table-body');
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        
+        const records = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+
+        if(records.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#95a5a6;">Esperando ingresos de alumnos...</td></tr>`;
+            return;
+        }
+
+        records.forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${r.matricula}</strong></td>
+                <td style="font-size:1.3rem; text-align:center;">${r.mood}</td>
+                <td>${r.evidence}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+</body>
+</html>
